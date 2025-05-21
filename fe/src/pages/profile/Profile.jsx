@@ -1,14 +1,13 @@
-import { Avatar, Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import SimpleDialogDemo from "./ProfileDialog";
 import AlertDialogSlide from "./ProfileDialog";
 import { instance } from "../../Instance/Instanse";
 import { useGlobalVar } from "../../GlobalContext/Global";
 
 const Profile = () => {
   const [open, setOpen] = React.useState(false);
-  const [userData, setUserData] = useState([])
-  const {setUser} = useGlobalVar()
+  const [userData, setUserData] = useState([]);
+  const { setUser } = useGlobalVar();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -28,31 +27,30 @@ const Profile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setUserData(response.data.user)
+      setUserData(response.data.user);
       console.log(response);
     } catch (error) {
       console.log(error);
     }
   };
 
-
-  const handleDeleteAccount = async() => {
+  const handleDeleteAccount = async () => {
     try {
-        const token = localStorage.getItem("accessToken");
-        const response = await instance.delete("/users", {
-             headers: {
+      const token = localStorage.getItem("accessToken");
+      const response = await instance.delete("/users", {
+        headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
-        })
-        console.log(response)
-        localStorage.removeItem("accessToken");
-            setUser(false);
+      });
+      console.log(response);
+      localStorage.removeItem("accessToken");
+      setUser(false);
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     handleGetUser();
@@ -78,9 +76,11 @@ const Profile = () => {
           Update
         </Button>
         <Button
-        variant="outlined" color="error"
+          variant="outlined"
+          color="error"
           onClick={() => {
             localStorage.removeItem("accessToken");
+            setUserData();
             setUser(false);
           }}
         >

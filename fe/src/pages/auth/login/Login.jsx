@@ -12,37 +12,38 @@ import { instance } from "../../../Instance/Instanse";
 import { useGlobalVar } from "../../../GlobalContext/Global";
 
 const Login = (props) => {
-  const {setUser} = useGlobalVar()
-  const navigate = useNavigate()
+  const { setUser, setUserData } = useGlobalVar();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: "",
-    password : ""
-  })
+    password: "",
+  });
 
   const handleChange = (e) => {
-    const {name, value} = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  } 
+      [name]: value,
+    }));
+  };
 
-  const handleLogin = async() => {
+  const handleLogin = async () => {
     try {
-      const response = await instance.post("/auth/login", formData)
-      console.log(response)
-        const token = response.data.accessToken;
+      const response = await instance.post("/auth/login", formData);
+      console.log(response);
+      const token = response.data.accessToken;
 
       if (token) {
         localStorage.setItem("accessToken", token);
         setUser(true);
       }
-      navigate("/")
+      setUserData(response.data.user);
+      navigate("/");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   return (
     <main
       style={{
@@ -77,11 +78,23 @@ const Login = (props) => {
           </div>
           <FormControl>
             <FormLabel>Username</FormLabel>
-            <Input name="username" type="username" placeholder="username" value={formData.username} onChange={handleChange} />
+            <Input
+              name="username"
+              type="username"
+              placeholder="username"
+              value={formData.username}
+              onChange={handleChange}
+            />
           </FormControl>
           <FormControl>
             <FormLabel>Password</FormLabel>
-            <Input name="password" type="password" placeholder="password" value={formData.password} onChange={handleChange}/>
+            <Input
+              name="password"
+              type="password"
+              placeholder="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
           </FormControl>
           <Button variant="contained" sx={{ mt: 1 }} onClick={handleLogin}>
             Log in

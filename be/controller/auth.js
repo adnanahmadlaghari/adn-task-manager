@@ -86,7 +86,9 @@ const login = async (req, res) => {
     }
     const { accessToken, refreshToken } = generateToken(user);
 
-    res.status(201).json({ accessToken, refreshToken });
+    const res_user = await User.findOne({ username }, { password: 0 });
+
+    res.status(201).json({ accessToken, refreshToken, user: res_user });
   } catch (error) {
     res.status(500).send("Failed to login user error");
     console.log(error);

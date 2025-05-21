@@ -12,6 +12,7 @@ import { red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Delete, ModeEdit } from "@mui/icons-material";
 import { Grid } from "@mui/material";
+import { useGlobalVar } from "../../GlobalContext/Global";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -40,9 +41,25 @@ const ExpandMore = styled((props) => {
 export default function RecipeReviewCard({ key, title, content }) {
   const [expanded, setExpanded] = React.useState(false);
 
+  const { UserData } = useGlobalVar();
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  if (UserData.roles === undefined)
+    return (
+      <Grid
+        container
+        flexDirection={"row"}
+        width={"100vw"}
+        height={"100vh"}
+        justifyContent={"center"}
+        mt={8}
+      >
+        Loading
+      </Grid>
+    );
 
   return (
     <Card fullwidth key={key}>
@@ -53,14 +70,16 @@ export default function RecipeReviewCard({ key, title, content }) {
           </Avatar>
         }
         action={
-          <Grid container flexDirection={"row"} gap={1}>
-            <IconButton aria-label="settings">
-              <ModeEdit />
-            </IconButton>
-            <IconButton aria-label="settings">
-              <Delete />
-            </IconButton>
-          </Grid>
+          UserData.roles.includes("admin") && (
+            <Grid container flexDirection={"row"} gap={1}>
+              <IconButton aria-label="settings">
+                <ModeEdit />
+              </IconButton>
+              <IconButton aria-label="settings">
+                <Delete />
+              </IconButton>
+            </Grid>
+          )
         }
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
