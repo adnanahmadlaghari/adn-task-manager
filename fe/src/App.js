@@ -24,15 +24,11 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route
             index
-            element={user ? <Home /> : <Navigate to="/login" replace />}
+            element={user ? <Dashboard /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/profile"
             element={user ? <Profile /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/dashboard"
-            element={user ? <Dashboard /> : <Navigate to="/login" replace />}
           />
         </Route>
       </Routes>

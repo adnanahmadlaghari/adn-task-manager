@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { ArrowBack, Delete, ModeEdit } from "@mui/icons-material";
 import { instance } from "../../Instance/Instanse";
 
-const SingleTask = ({ task, setSelected, setTasks }) => {
+const SingleTask = ({ task, setSelected, setTasks, newData, setnewData }) => {
   const [formData, setFormData] = useState({
     title: task.title || "",
     content: task.content || "",
@@ -30,6 +39,7 @@ const SingleTask = ({ task, setSelected, setTasks }) => {
       });
       console.log(response);
       setSelected(null);
+      setnewData(!newData);
       alert("task successfully update");
     } catch (error) {
       console.log(error);
@@ -47,6 +57,7 @@ const SingleTask = ({ task, setSelected, setTasks }) => {
       });
       setTasks((prevTask) => prevTask.filter((t) => t._id !== id));
       setSelected(null);
+      setnewData(!newData);
       console.log(response);
       alert("task successfully deleted");
     } catch (error) {
@@ -55,40 +66,73 @@ const SingleTask = ({ task, setSelected, setTasks }) => {
   };
 
   return (
-    <Box>
-      <Stack>
+    <Grid
+      container
+      width={"100%"}
+      height={`calc(100vh - 220px)`}
+      flexDirection={"row"}
+      justifyContent={"center"}
+    >
+      <Paper
+        elevation={2}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "450px",
+          alignItems: "center",
+          height: "fit-content",
+          gap: 2,
+          p: 2,
+        }}
+      >
+        <Grid
+          container
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          width={"100%"}
+        >
+          <IconButton onClick={() => setSelected(null)}>
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" flex={1} textAlign={"center"}>
+            Detail Task
+          </Typography>
+        </Grid>
         <TextField
+          label="title"
           name="title"
+          variant="standard"
+          fullWidth
           value={formData.title}
           onChange={handleChange}
         />
-        <IconButton onClick={() => setSelected(null)}>
-          <ArrowBack />
-        </IconButton>
         <TextField
+          label="content"
           name="content"
+          variant="standard"
+          fullWidth
           value={formData.content}
           onChange={handleChange}
         />
-      </Stack>
-      <Stack direction="row" spacing={2}>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<Delete />}
-          onClick={() => handleDeleteTask(task._id)}
-        >
-          Delete
-        </Button>
-        <Button
-          variant="contained"
-          endIcon={<ModeEdit />}
-          onClick={() => handleEditTask(task._id)}
-        >
-          Edit
-        </Button>
-      </Stack>
-    </Box>
+        <Grid container flexDirection={"row"} gap={2}>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<Delete />}
+            onClick={() => handleDeleteTask(task._id)}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={<ModeEdit />}
+            onClick={() => handleEditTask(task._id)}
+          >
+            Edit
+          </Button>
+        </Grid>
+      </Paper>
+    </Grid>
   );
 };
 

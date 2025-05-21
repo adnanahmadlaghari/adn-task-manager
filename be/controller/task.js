@@ -25,15 +25,15 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-const getMyTask = async(req, res) => {
+const getMyTask = async (req, res) => {
   try {
-    const {id} = req.user
-    const tasks =  await Task.find({author: id})
+    const { id } = req.user;
+    const tasks = await Task.find({ author: id });
     res.status(200).json({ tasks });
   } catch (error) {
     res.status(500).send("internal server error");
   }
-}
+};
 
 const getSingleTask = async (req, res) => {
   try {
@@ -47,15 +47,20 @@ const getSingleTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
   try {
-    const { id: userID } = req.user;
+    const { id: userID, roles } = req.user;
     const { id } = req.params;
     const data = req.body;
+    let task;
 
     if (data.author) {
       return res.status(401).send({ error: "bad input" });
     }
 
-    const task = await Task.findOneAndUpdate({ author: userID, _id: id }, data);
+    if (roles.includes("admin")) {
+      task = await Task.findOneAndUpdate({ _id: id }, data);
+    } else {
+      task = await Task.findOneAndUpdate({ author: userID, _id: id }, data);
+    }
 
     if (!task) return res.status(404).json({ error: "task not found" });
 
@@ -67,9 +72,14 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const { id: userID } = req.user;
+    const { id: userID, roles } = req.user;
     const { id } = req.params;
-    const task = await Task.findOneAndDelete({ author: userID, _id: id });
+    let task;
+    if (roles.includes("admin")) {
+      task = await Task.findOneAndDelete({ _id: id });
+    } else {
+      task = await Task.findOneAndDelete({ author: userID, _id: id });
+    }
     if (!task) return res.status(404).json({ error: "task not found" });
     res
       .status(200)

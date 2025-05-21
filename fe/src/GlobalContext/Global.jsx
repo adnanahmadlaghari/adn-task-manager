@@ -7,8 +7,9 @@ export const GlobalProvider = ({ children }) => {
     const token = localStorage.getItem("accessToken");
     return !!token;
   });
+  const [Theme, setTheme] = useState("dark");
   return (
-    <GlobalContext.Provider value={{ user, setUser }}>
+    <GlobalContext.Provider value={{ user, setUser, Theme, setTheme }}>
       {children}
     </GlobalContext.Provider>
   );

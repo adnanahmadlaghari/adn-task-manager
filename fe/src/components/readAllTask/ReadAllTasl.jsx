@@ -9,10 +9,9 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Delete, ModeEdit } from "@mui/icons-material";
+import { Grid } from "@mui/material";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -46,7 +45,7 @@ export default function RecipeReviewCard({ key, title, content }) {
   };
 
   return (
-    <Card fullwidth key={key} >
+    <Card fullwidth key={key}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -54,9 +53,14 @@ export default function RecipeReviewCard({ key, title, content }) {
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+          <Grid container flexDirection={"row"} gap={1}>
+            <IconButton aria-label="settings">
+              <ModeEdit />
+            </IconButton>
+            <IconButton aria-label="settings">
+              <Delete />
+            </IconButton>
+          </Grid>
         }
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
@@ -79,12 +83,6 @@ export default function RecipeReviewCard({ key, title, content }) {
       </CardContent>
 
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}

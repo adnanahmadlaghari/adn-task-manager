@@ -9,12 +9,11 @@ import Box from "@mui/material/Box";
 import CreateTask from "../components/createTask/CreateTask";
 import MyTask from "../components/myTask/MyTask";
 import Tasks from "../components/data/Index";
-import { Stack } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import { useState } from "react";
 import SingleTask from "../components/myTask/SingleTask";
 import RecipeReviewCard from "../components/readAllTask/ReadAllTasl";
 import { instance } from "../Instance/Instanse";
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -53,103 +52,125 @@ export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = React.useState(2);
   const [selected, setSelected] = useState(null);
-  const [tasks, setTasks] = useState([])
-  const [allTask, setAllTask] = useState([])
+  const [tasks, setTasks] = useState([]);
+  const [allTask, setAllTask] = useState([]);
+  const [newData, setnewData] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const handleMyTask = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
 
-  const handleMyTask = async() => {
-    try {
-        const token = localStorage.getItem("accessToken");
-      
-          const response = await instance.get("/tasks/mytask", {
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              "Authorization": `Bearer ${token}` 
-            }
-          });
-          setTasks(response.data.tasks)
-          console.log(response)
+      const response = await instance.get("/tasks/mytask", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTasks(response.data.tasks);
+      console.log(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-    const handleAllTask = async() => {
+  };
+  const handleAllTask = async () => {
     try {
-        const token = localStorage.getItem("accessToken");
-      
-          const response = await instance.get("/tasks/", {
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              "Authorization": `Bearer ${token}` 
-            }
-          });
-          setAllTask(response.data.tasks)
-          console.log("all tasks",response)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+      const token = localStorage.getItem("accessToken");
 
-  const handleClickSingleTask = async(id) => {
-    try {
-       const token = localStorage.getItem("accessToken");
-    const task = await instance.get(`/tasks/${id}` , {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}` 
-      }
-    });
-    console.log("this is single task",task)
-    setSelected(task.data.task);
+      const response = await instance.get("/tasks/", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setAllTask(response.data.tasks);
+      console.log("all tasks", response);
     } catch (error) {
-      console.log("failed to get single task",error)
+      console.log(error);
+    }
+  };
+
+  const handleClickSingleTask = async (id) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const task = await instance.get(`/tasks/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("this is single task", task);
+      setSelected(task.data.task);
+    } catch (error) {
+      console.log("failed to get single task", error);
     }
   };
 
   React.useEffect(() => {
-    handleMyTask()
-    handleAllTask()
-  },[])
+    handleMyTask();
+    handleAllTask();
+  }, []);
+
+  React.useEffect(() => {
+    handleMyTask();
+    handleAllTask();
+  }, [newData]);
 
   return (
-    <Box sx={{ bgcolor: "background.paper", width: "100vw" }}>
-      <AppBar position="static">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          variant="fullWidth"
-          aria-label="full width tabs example"
-        >
-          <Tab label="Create Task" {...a11yProps(0)} />
-          <Tab label="My Task" {...a11yProps(1)} />
-          <Tab label="All Tasks" {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
+    <Grid container flexDirection={"column"} p={2}>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        indicatorColor="secondary"
+        textColor="inherit"
+        variant="fullWidth"
+        aria-label="full width tabs example"
+      >
+        <Tab label="Create Task" {...a11yProps(0)} />
+        <Tab label="My Task" {...a11yProps(1)} />
+        <Tab label="All Tasks" {...a11yProps(2)} />
+      </Tabs>
+
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <CreateTask />
+        <CreateTask
+          newData={newData}
+          setnewData={setnewData}
+          setValue={setValue}
+        />
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
         {selected ? (
-          selected && <SingleTask task={selected} setSelected={setSelected} setTasks={setTasks}/>
+          selected && (
+            <SingleTask
+              task={selected}
+              setSelected={setSelected}
+              setTasks={setTasks}
+              newData={newData}
+              setnewData={setnewData}
+            />
+          )
         ) : (
-          <Stack
+          <Grid
+            container
             direction="row"
             sx={{
               flexWrap: "wrap",
-              gap: 2,
-              p: 4,
-              justifyContent: "space-between",
+              gap: "10px",
+              p: 2,
+              justifyContent: "start",
             }}
           >
+            {tasks.length === 0 && (
+              <Typography variant="body1" textAlign={"center"}>
+                No Tasks
+              </Typography>
+            )}
             {tasks.map((task) => {
               const shortContent =
                 task.content.length > 300
@@ -161,22 +182,20 @@ export default function FullWidthTabs() {
                   key={task._id}
                   {...task}
                   content={shortContent}
-                  handleClick={() => handleClickSingleTask(task._id)} 
+                  handleClick={() => handleClickSingleTask(task._id)}
                 />
               );
             })}
-          </Stack>
+          </Grid>
         )}
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
-        <Stack>
-          {
-            allTask.map((task) => {
-              return <RecipeReviewCard key={task._id} {...task}/>
-            })
-          }
-        </Stack>
+        <Grid container flexDirection={"column"} gap={2}>
+          {allTask.map((task) => {
+            return <RecipeReviewCard key={task._id} {...task} />;
+          })}
+        </Grid>
       </TabPanel>
-    </Box>
+    </Grid>
   );
 }
