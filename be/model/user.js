@@ -1,55 +1,49 @@
-const mongoose = require("mongoose")
-const Task = require("./task")
+const mongoose = require("mongoose");
+const Task = require("./task");
+const Permission = require("./permissions");
 
-const UserSchema = new mongoose.Schema({
-    first_name : {
-        type: String
+const UserSchema = new mongoose.Schema(
+  {
+    first_name: {
+      type: String,
     },
-    last_name : {
-        type: String
+    last_name: {
+      type: String,
     },
-    username : {
-        type: String,
-        unique: true
+    username: {
+      type: String,
+      unique: true,
     },
-    password : {
-        type: String
+    password: {
+      type: String,
     },
-    profile : {
-        type: String,
+    profile: {
+      type: String,
     },
+    roles: [String],
     created_at: {
-        type: Date,
-        default: Date.now()
+      type: Date,
+      default: Date.now(),
     },
-    updated_at : {
-        type: Date,
-        default: Date.now()
-    }
-},{toJSON:{virtuals:true},toObject:{virtuals:true}})
+    updated_at: {
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
 
 UserSchema.virtual("tasks", {
-    ref: "Task",
-    localField: "_id",
-    foreignField: "author",
-})
-
-// UserSchema.pre("save", async function(next) {
-//     if(!this.isModified("password")) return next();
-//     try {
-//         const hashedPassword = await argone2.hash(this.password)
-//         this.password= hashedPassword;
-//         next()
-//     } catch (error) {
-//         next()
-//     }
-// })
-
-UserSchema.post('findOneAndDelete', async function (doc) {
-    await Task.deleteMany({ author: doc.id });
+  ref: "Task",
+  localField: "_id",
+  foreignField: "author",
 });
 
+UserSchema.post("findOneAndDelete", async function (doc) {
+  await Task.deleteMany({ author: doc.id });
+  await Permission.deleteMany({ user: doc.id });
+});
 
-const User = mongoose.model("User", UserSchema)
+const User = mongoose.model("User", UserSchema);
 
-module.exports = User
+module.exports = User;

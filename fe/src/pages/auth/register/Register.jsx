@@ -12,15 +12,18 @@ import { useGlobalVar } from "../../../GlobalContext/Global";
 
 const Register = () => {
   const { setUser } = useGlobalVar();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     username: "",
+    role: "",
     password: "",
     confirmPassword: "",
   });
+  const [isLoading, setisLoading] = useState(false);
+  const [Error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +39,7 @@ const Register = () => {
     }
 
     try {
+      setisLoading(true);
       const response = await instance.post("/auth/register", formData);
       console.log(response);
       const token = response.data.accessToken;
@@ -44,9 +48,12 @@ const Register = () => {
         localStorage.setItem("accessToken", token);
         setUser(true);
       }
-      navigate("/")
+      navigate("/");
     } catch (error) {
+      setError(error.response.data.error);
       console.log(error.response.data.error);
+    } finally {
+      setisLoading(false);
     }
   };
   return (
@@ -113,6 +120,15 @@ const Register = () => {
           </FormControl>
           <FormControl>
             <Input
+              name="role"
+              placeholder="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+            />
+          </FormControl>
+          <FormControl>
+            <Input
               name="password"
               type="password"
               placeholder="Password"
@@ -131,7 +147,17 @@ const Register = () => {
               required
             />
           </FormControl>
-          <Button variant="contained" sx={{ mt: 1 }} onClick={handleRegister}>
+          {Error && (
+            <Typography variant="caption" color="error">
+              {Error}
+            </Typography>
+          )}
+          <Button
+            variant="contained"
+            sx={{ mt: 1 }}
+            onClick={handleRegister}
+            disabled={isLoading}
+          >
             Sign Up
           </Button>
           <Typography
