@@ -1,4 +1,5 @@
 const express = require("express");
+const pagination = require("../middlewares/pagination");
 const {
   createTask,
   getAllTasks,
@@ -10,8 +11,8 @@ const {
 
 const taskRouter = express.Router();
 
-taskRouter.route("/").post(createTask).get(getAllTasks);
-taskRouter.route("/mytask").get(getMyTask)
+taskRouter.route("/").post(createTask).get(pagination(3), getAllTasks);
+taskRouter.route("/mytask").get(getMyTask);
 
 taskRouter
   .route("/:id")

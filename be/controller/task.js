@@ -17,9 +17,23 @@ const createTask = async (req, res) => {
 };
 
 const getAllTasks = async (req, res) => {
+  const { startIndex, endIndex, page, limit } = req.pagination;
   try {
-    const tasks = await Task.find({});
-    res.status(200).json({ tasks });
+    const tasks = await Task.find({}).skip(startIndex).limit(limit);
+    const count = await Task.countDocuments();
+
+    // Base URL construction
+    const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
+      req.path
+    }`;
+
+    const hasNext = startIndex + limit < count;
+    const hasPrev = page > 1;
+
+    const next = hasNext ? `${baseUrl}?page=${page + 1}` : null;
+    const previous = hasPrev ? `${baseUrl}?page=${page - 1}` : null;
+
+    res.status(200).json({ results: tasks, count, next, previous });
   } catch (error) {
     res.status(500).send("internal server error");
   }
