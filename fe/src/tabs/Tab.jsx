@@ -120,7 +120,6 @@ export default function FullWidthTabs() {
 
   return (
     <Box sx={{ bgcolor: "background.paper", width: "100vw" }}>
-      <AppBar position="static">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -133,7 +132,6 @@ export default function FullWidthTabs() {
           <Tab label="My Task" {...a11yProps(1)} />
           <Tab label="All Tasks" {...a11yProps(2)} />
         </Tabs>
-      </AppBar>
       <TabPanel value={value} index={0} dir={theme.direction}>
         <CreateTask />
       </TabPanel>

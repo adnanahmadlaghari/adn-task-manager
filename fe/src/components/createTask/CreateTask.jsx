@@ -45,7 +45,6 @@ const handleCreateTask = async () => {
         p: 3,
         borderRadius: 2,
         boxShadow: 3,
-        backgroundColor: "white",
       }}
       component={Paper}
     >

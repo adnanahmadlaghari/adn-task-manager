@@ -20,6 +20,7 @@ const Register = () => {
     username: "",
     password: "",
     confirmPassword: "",
+    role: "",
   });
 
   const handleChange = (e) => {
@@ -107,6 +108,16 @@ const Register = () => {
               type="username"
               placeholder="username"
               value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </FormControl>
+           <FormControl>
+            <Input
+              name="role"
+              type="role"
+              placeholder="role"
+              value={formData.role}
               onChange={handleChange}
               required
             />
