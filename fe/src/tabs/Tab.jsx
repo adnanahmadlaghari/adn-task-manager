@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import CreateTask from "../components/createTask/CreateTask";
 import MyTask from "../components/myTask/MyTask";
 import Tasks from "../components/data/Index";
-import { Grid, Stack } from "@mui/material";
+import { Button, Grid, Stack } from "@mui/material";
 import { useState } from "react";
 import SingleTask from "../components/myTask/SingleTask";
 import RecipeReviewCard from "../components/readAllTask/ReadAllTasl";
@@ -53,8 +53,15 @@ export default function FullWidthTabs() {
   const [value, setValue] = React.useState(2);
   const [selected, setSelected] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [allTask, setAllTask] = useState([]);
+  const [allTask, setAllTask] = useState({
+    results: [],
+    count: 0,
+    next: null,
+    previous: null,
+  });
   const [newData, setnewData] = useState(false);
+  const [IsLoading, setIsLoading] = useState(false);
+  const [Error, setError] = useState("");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -62,7 +69,10 @@ export default function FullWidthTabs() {
 
   const handleMyTask = async () => {
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("accessToken");
+
+      console.log(token);
 
       const response = await instance.get("/tasks/mytask", {
         headers: {
@@ -74,24 +84,38 @@ export default function FullWidthTabs() {
       setTasks(response.data.tasks);
       console.log(response);
     } catch (error) {
+      setTasks([]);
+      setError(JSON.stringify(error.response));
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  const handleAllTask = async () => {
+  const handleAllTask = async (newUrl) => {
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("accessToken");
+      let url = "/tasks/";
 
-      const response = await instance.get("/tasks/", {
+      if (newUrl) {
+        const page = newUrl.split("/")[4];
+        console.log(page);
+        url = `/tasks/${page && `${page}`}`;
+      }
+
+      const response = await instance.get(url, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      setAllTask(response.data.tasks);
+      setAllTask(response.data);
       console.log("all tasks", response);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,14 +137,18 @@ export default function FullWidthTabs() {
   };
 
   React.useEffect(() => {
-    handleMyTask();
-    handleAllTask();
+    if (!IsLoading) {
+      handleMyTask();
+      handleAllTask();
+    }
   }, []);
 
   React.useEffect(() => {
     handleMyTask();
     handleAllTask();
   }, [newData]);
+
+  if (IsLoading) return <>loading</>;
 
   return (
     <Grid container flexDirection={"column"} p={2}>
@@ -191,9 +219,33 @@ export default function FullWidthTabs() {
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
         <Grid container flexDirection={"column"} gap={2}>
-          {allTask.map((task) => {
+          <Typography variant="h6" textAlign={"end"}>
+            total tasks: {allTask.count || 0}
+          </Typography>
+          {allTask.results.map((task) => {
             return <RecipeReviewCard key={task._id} {...task} />;
           })}
+          <Grid
+            container
+            flexDirection={"row"}
+            gap={1}
+            justifyContent={"center"}
+          >
+            <Button
+              variant="contained"
+              disabled={allTask.previous === null}
+              onClick={() => handleAllTask(allTask.previous)}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="contained"
+              disabled={allTask.next === null}
+              onClick={() => handleAllTask(allTask.next)}
+            >
+              Next
+            </Button>
+          </Grid>
         </Grid>
       </TabPanel>
     </Grid>

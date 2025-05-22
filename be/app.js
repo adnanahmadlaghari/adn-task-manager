@@ -15,8 +15,8 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/auth", authRouter);
-// app.use("/tasks", passport.authenticate("jwt", { session: false }), taskRouter);
-app.use("/tasks", taskRouter);
+app.use("/tasks", passport.authenticate("jwt", { session: false }), taskRouter);
+// app.use("/tasks", taskRouter);
 app.use("/users", passport.authenticate("jwt", { session: false }), userRouter);
 
 app.get("/", (req, res) => {

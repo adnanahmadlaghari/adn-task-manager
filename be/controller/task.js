@@ -40,6 +40,7 @@ const getAllTasks = async (req, res) => {
 };
 
 const getMyTask = async (req, res) => {
+  console.log(req.user);
   try {
     const { id } = req.user;
     const tasks = await Task.find({ author: id });
