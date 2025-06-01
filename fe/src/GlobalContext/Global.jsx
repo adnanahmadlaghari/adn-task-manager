@@ -33,7 +33,9 @@ export const GlobalProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    handleGetUser();
+    if (localStorage.getItem("accessToken")) {
+      handleGetUser();
+    }
   }, []);
 
   // if (IsLoading || !UserData || !user) return <>Loading</>;

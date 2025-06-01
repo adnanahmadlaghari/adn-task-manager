@@ -6,6 +6,7 @@ import Login from "./pages/auth/login/Login";
 import Register from "./pages/auth/register/Register";
 import { useGlobalVar } from "./GlobalContext/Global";
 import Profile from "./pages/profile/Profile";
+import Chat from "./pages/chat/Chat";
 
 const App = () => {
   const { user } = useGlobalVar();
@@ -29,6 +30,10 @@ const App = () => {
           <Route
             path="/profile"
             element={user ? <Profile /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/chat"
+            element={user ? <Chat /> : <Navigate to="/login" replace />}
           />
         </Route>
       </Routes>

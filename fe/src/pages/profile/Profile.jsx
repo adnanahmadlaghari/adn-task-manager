@@ -19,14 +19,7 @@ const Profile = () => {
 
   const handleGetUser = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
-      const response = await instance.get("/users/single", {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await instance.get("/users/single");
       setUserData(response.data.user);
       console.log(response);
     } catch (error) {
