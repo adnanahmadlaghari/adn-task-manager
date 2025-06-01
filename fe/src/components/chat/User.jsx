@@ -1,8 +1,10 @@
 import { Paper, Typography, useTheme } from "@mui/material";
 import React from "react";
+import { useGlobalVar } from "../../GlobalContext/Global";
 
 const User = ({ id, fn, ln, username, setSelectedUser, SelectedUser }) => {
   const theme = useTheme();
+  const cxt = useGlobalVar();
 
   return (
     <Paper
@@ -23,6 +25,11 @@ const User = ({ id, fn, ln, username, setSelectedUser, SelectedUser }) => {
       <Typography variant="body1" pl={1}>
         {username}
       </Typography>
+      {cxt.OnlineUsers.includes(id) && (
+        <Typography variant="body1" pl={1}>
+          online
+        </Typography>
+      )}
     </Paper>
   );
 };

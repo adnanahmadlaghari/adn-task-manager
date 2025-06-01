@@ -7,18 +7,19 @@ const Chat = () => {
   const [SelectedUser, setSelectedUser] = useState();
   return (
     <Grid container flexDirection={"row"} flex={1}>
-      <Grid container flexDirection={"column"} size={{ xs: 0, md: 2.5 }}>
+      <Grid
+        container
+        flexDirection={"column"}
+        size={{ xs: 0, md: 2.5 }}
+        gap={2}
+        p={1.5}
+      >
         <LeftSideBar
           setSelectedUser={setSelectedUser}
           SelectedUser={SelectedUser}
         />
       </Grid>
-      <Grid
-        container
-        flexDirection={"column"}
-        flex={1}
-        border={"1px solid red"}
-      >
+      <Grid container flexDirection={"column"} flex={1} p={1.5}>
         <MessageBox />
       </Grid>
     </Grid>

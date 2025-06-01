@@ -31,7 +31,7 @@ const LeftSideBar = ({ setSelectedUser, SelectedUser }) => {
       {Loading ? (
         <Typography variant="h6">Loading</Typography>
       ) : (
-        <Grid container flexDirection={"column"} gap={2} p={2}>
+        <>
           {Users.map((user) => {
             return (
               <User
@@ -45,7 +45,7 @@ const LeftSideBar = ({ setSelectedUser, SelectedUser }) => {
               />
             );
           })}
-        </Grid>
+        </>
       )}
     </>
   );
