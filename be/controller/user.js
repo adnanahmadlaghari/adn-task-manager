@@ -2,8 +2,10 @@ const User = require("../model/user");
 const argon2 = require("argon2");
 
 const getAllUsers = async (req, res) => {
+  const user = req.user;
+  console.log(user);
   try {
-    const users = await User.find({}).populate("tasks");
+    const users = await User.find({ _id: { $ne: user._id } }).populate("tasks");
     res.status(201).json({ users });
   } catch (error) {
     res.status(500).send("Failed to get user error");
@@ -13,8 +15,8 @@ const getAllUsers = async (req, res) => {
 const getSingleUser = async (req, res) => {
   try {
     const { username } = req.user;
-    const user = await User.findOne({username}).populate("tasks");
-    if(!user) return res.status(404).json({msg: "User Not Found!"})
+    const user = await User.findOne({ username }).populate("tasks");
+    if (!user) return res.status(404).json({ msg: "User Not Found!" });
     res.status(200).json({ user });
   } catch (error) {
     res.status(500).send("Failed to get single user");
@@ -54,7 +56,7 @@ const updateUser = async (req, res) => {
 const deletedUser = async (req, res) => {
   try {
     const { username } = req.user;
-    const user = await User.findOneAndDelete({username: username});
+    const user = await User.findOneAndDelete({ username: username });
     res.status(200).json(user);
   } catch (error) {
     res.status(500).send("Failed to delete user");

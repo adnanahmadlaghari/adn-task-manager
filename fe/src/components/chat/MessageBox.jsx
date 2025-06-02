@@ -17,6 +17,7 @@ const MessageBox = ({ SelectedUser }) => {
   const [MessageData, setMessageData] = useState("");
   const handleSend = () => {
     sendMessage(SelectedUser, MessageData);
+    setMessageData("");
   };
   return (
     <>
