@@ -83,6 +83,7 @@ export const GlobalProvider = ({ children }) => {
         setMessages,
         sendMessage,
         OnlineUsers,
+        socket,
       }}
     >
       {children}

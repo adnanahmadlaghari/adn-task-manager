@@ -19,8 +19,8 @@ const Chat = () => {
           SelectedUser={SelectedUser}
         />
       </Grid>
-      <Grid container flexDirection={"column"} flex={1} p={1.5}>
-        <MessageBox />
+      <Grid container flexDirection={"column"} flex={1} p={1.5} gap={2}>
+        <MessageBox SelectedUser={SelectedUser} />
       </Grid>
     </Grid>
   );

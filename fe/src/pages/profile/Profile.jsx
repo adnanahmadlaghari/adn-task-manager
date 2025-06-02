@@ -7,7 +7,7 @@ import { useGlobalVar } from "../../GlobalContext/Global";
 const Profile = () => {
   const [open, setOpen] = React.useState(false);
   const [userData, setUserData] = useState([]);
-  const { setUser } = useGlobalVar();
+  const { setUser, socket } = useGlobalVar();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -74,6 +74,7 @@ const Profile = () => {
           onClick={() => {
             localStorage.removeItem("accessToken");
             setUserData();
+            socket.disconnect();
             setUser(false);
           }}
         >

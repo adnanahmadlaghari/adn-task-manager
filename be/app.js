@@ -50,6 +50,8 @@ io.on("connection", (socket) => {
   socket.on("chat message", async (msg) => {
     const { userId, toUserId, text } = msg;
 
+    console.log(msg, "i fired");
+
     if (!userId || !toUserId || !text) {
       socket.emit("chat message", {
         error: "⚠️ userId, toUserId, and text are required",
