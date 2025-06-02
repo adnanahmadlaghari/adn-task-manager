@@ -3,7 +3,6 @@ const argon2 = require("argon2");
 
 const getAllUsers = async (req, res) => {
   const user = req.user;
-  console.log(user);
   try {
     const users = await User.find({ _id: { $ne: user._id } }).populate("tasks");
     res.status(201).json({ users });
