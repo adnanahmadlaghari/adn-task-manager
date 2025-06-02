@@ -6,19 +6,25 @@ const { createContext, useState, useContext, useEffect } = require("react");
 export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
-  const socket = io("http://localhost:5000/", { autoConnect: false });
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem("accessToken");
     return !!token;
   });
   const [Theme, setTheme] = useState("dark");
   const [UserData, setUserData] = useState({});
+  const [Socket, setSocket] = useState();
   const [OnlineUsers, setOnlineUsers] = useState([]);
   const [IsLoading, setIsLoading] = useState(false);
   const [Messages, setMessages] = useState([]);
 
   const sendMessage = (receiever, msg) => {
-    socket.emit("chat message", {
+    if (!Socket.connected) {
+      console.warn("Socket not connected. Message not sent.");
+      return;
+    }
+    console.log({ from: UserData.username, text: msg });
+    setMessages((prev) => [...prev, { from: UserData.username, text: msg }]);
+    Socket.emit("chat message", {
       userId: UserData._id,
       toUserId: receiever,
       text: msg,
@@ -37,9 +43,9 @@ export const GlobalProvider = ({ children }) => {
         },
       });
       setUserData(response.data.user);
-      socket.connect(); // Manually connect
-      socket.on("connect", () => {
-        socket.emit("register", response.data.user._id);
+      Socket.connect(); // Manually connect
+      Socket.on("connect", () => {
+        Socket.emit("register", response.data.user._id);
       });
     } catch (error) {
       console.log(error);
@@ -50,23 +56,33 @@ export const GlobalProvider = ({ children }) => {
 
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
+      const socket_connection = io("http://localhost:5000/", {
+        autoConnect: false,
+      });
+      setSocket(socket_connection);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Socket) {
       handleGetUser();
       // Listen for incoming messages
-      socket.on("chat message", (data) => {
+      Socket.on("chat message", (data) => {
         console.log("Received:", data);
         setMessages((prev) => [...prev, data]);
       });
-      socket.on("online_users", (data) => {
+      Socket.on("online_users", (data) => {
         console.log("Received online users:", data);
         setOnlineUsers(data);
       });
     }
-    // 🔌 Clean up listener on unmount
     return () => {
-      socket.off("chat message");
-      socket.disconnect();
+      if (Socket) {
+        Socket.off("chat message");
+        Socket.disconnect();
+      }
     };
-  }, []);
+  }, [Socket]);
 
   // if (IsLoading || !UserData || !user) return <>Loading</>;
 
@@ -83,7 +99,7 @@ export const GlobalProvider = ({ children }) => {
         setMessages,
         sendMessage,
         OnlineUsers,
-        socket,
+        Socket,
       }}
     >
       {children}

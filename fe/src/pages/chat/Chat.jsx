@@ -2,9 +2,17 @@ import { Grid } from "@mui/material";
 import React, { useState } from "react";
 import LeftSideBar from "../../components/chat/LeftSideBar";
 import MessageBox from "../../components/chat/MessageBox";
+import { useGlobalVar } from "../../GlobalContext/Global";
+import { useEffect } from "react";
 
 const Chat = () => {
+  const { setMessages } = useGlobalVar();
   const [SelectedUser, setSelectedUser] = useState();
+
+  useEffect(() => {
+    setMessages([]);
+  }, [SelectedUser]);
+
   return (
     <Grid container flexDirection={"row"} flex={1}>
       <Grid

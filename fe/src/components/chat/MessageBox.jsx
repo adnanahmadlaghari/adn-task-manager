@@ -16,7 +16,6 @@ const MessageBox = ({ SelectedUser }) => {
   const theme = useTheme();
   const [MessageData, setMessageData] = useState("");
   const handleSend = () => {
-    console.log(SelectedUser, MessageData);
     sendMessage(SelectedUser, MessageData);
   };
   return (
@@ -31,8 +30,8 @@ const MessageBox = ({ SelectedUser }) => {
           <Typography variant="h6">No Messages</Typography>
         ) : (
           <>
-            {Messages.map((msg) => (
-              <Message />
+            {Messages.map((msg, idx) => (
+              <Message key={idx} msg={msg} />
             ))}
           </>
         )}
